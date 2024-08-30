@@ -19,11 +19,13 @@ export const Board = (props: BoardProps) => {
         gridTemplateColumns: `repeat(${boardSetup.boardSize}, ${constants.BOARD_TEMPLATE_COLUMNS_SIZE})`,
         width: "fit-content",
       }}
+      data-testid="board"
     >
       {props.board.map((rows, rowIndex) =>
         rows.map((_column, columnIndex) => (
           <BoardCell
             key={`${rowIndex}-${columnIndex}`}
+            testId={`board-cell-${rowIndex}-${columnIndex}`}
             isAlive={
               props.board[rowIndex][columnIndex] === BoardCellState.ALIVE
             }
