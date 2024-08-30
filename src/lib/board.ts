@@ -64,3 +64,19 @@ export const computeNextState = (board: Board) => {
   );
   return nextState;
 };
+
+type ToggleCellStateParams = {
+  board: Board;
+  row: number;
+  column: number;
+};
+
+export const toggleCellState = (params: ToggleCellStateParams) => {
+  const boardCopy = params.board.map((row) => row.slice());
+  const boardUpdated = boardCopy.map((row) => row.slice());
+  boardUpdated[params.row][params.column] =
+    boardUpdated[params.row][params.column] === BoardCellState.ALIVE
+      ? BoardCellState.DEAD
+      : BoardCellState.ALIVE;
+  return boardUpdated;
+};
