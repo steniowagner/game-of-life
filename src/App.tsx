@@ -1,15 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useRef, useEffect } from "react";
 
-import { BoardCell, Button } from "@/components";
+import { BoardCell, Button, SetupBoard } from "@/components";
 import { BoardCellState, Board } from "@/types";
+import { useBoardSetup } from "@/contexts";
+import { constants } from "@/utils";
 
-const NUM_ROWS = 24;
-const NUM_COLS = 24;
-
-const generateInitialBoard = () => {
+const generateInitialBoard = (boardSize: number) => {
   const board: Board = [];
-  for (let i = 0; i < NUM_ROWS; i++) {
-    board.push(Array(NUM_COLS).fill(BoardCellState.DEAD));
+  for (let i = 0; i < boardSize; i++) {
+    board.push(Array(boardSize).fill(BoardCellState.DEAD));
   }
   return board;
 };
@@ -26,10 +26,12 @@ const operations = [
 ];
 
 export const App = () => {
-  const [board, setBoard] = useState<Board>(() => generateInitialBoard());
   const [isPlayingForever, setIsPlayingForever] = useState(false);
+  const [board, setBoard] = useState<Board>([]);
 
   const playingForeverRef = useRef(isPlayingForever);
+
+  const { boardSetup } = useBoardSetup();
 
   const updateCellStateManually = useCallback((row: number, column: number) => {
     setBoard((oldBoard) => {
@@ -53,9 +55,10 @@ export const App = () => {
     operations.forEach(([i, j]) => {
       const currentRowIndex = params.rowIndex + i;
       const currentColumnIndex = params.columnIndex + j;
-      const isRowValid = currentRowIndex >= 0 && currentRowIndex < NUM_ROWS;
+      const isRowValid =
+        currentRowIndex >= 0 && currentRowIndex < params.board.length;
       const isColumnValid =
-        currentColumnIndex >= 0 && currentColumnIndex < NUM_COLS;
+        currentColumnIndex >= 0 && currentColumnIndex < params.board.length;
       if (isRowValid && isColumnValid) {
         cellNeighborsCount += params.board[currentRowIndex][currentColumnIndex];
       }
@@ -103,11 +106,16 @@ export const App = () => {
 
   const forwardUpdates = useCallback(() => {
     let nextBoard = board.map((row) => row.slice());
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < boardSetup.advanceXStateUpdates; i++) {
       nextBoard = computeNextState(nextBoard);
     }
     setBoard(nextBoard);
-  }, [computeNextState, board]);
+  }, [computeNextState, board, boardSetup]);
+
+  const resetBoard = useCallback(() => {
+    setBoard(generateInitialBoard(boardSetup.boardSize));
+    setIsPlayingForever(false);
+  }, [boardSetup.boardSize]);
 
   useEffect(() => {
     playingForeverRef.current = isPlayingForever;
@@ -122,18 +130,24 @@ export const App = () => {
         return;
       }
       setBoard((oldBoard) => computeNextState(oldBoard));
-      setTimeout(loopComputingNextState, 300);
+      setTimeout(loopComputingNextState, boardSetup.playForeverTimeoutMs);
     };
     loopComputingNextState();
-  }, [computeNextState, isPlayingForever]);
+  }, [isPlayingForever]);
+
+  useEffect(() => {
+    setBoard(generateInitialBoard(boardSetup.boardSize));
+    setIsPlayingForever(false);
+  }, [boardSetup]);
 
   return (
     <div className="flex w-screen h-screen flex-col gap-y-4 justify-center items-center bg-slate-100 overflow-x-scroll overflow-y-scoll">
       <h1 className="text-3xl font-bold text-slate-750">Game of Life</h1>
+      <SetupBoard />
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${NUM_COLS}, 1.75rem)`,
+          gridTemplateColumns: `repeat(${boardSetup.boardSize}, ${constants.BOARD_TEMPLATE_COLUMNS_SIZE})`,
           width: "fit-content",
         }}
       >
@@ -147,13 +161,17 @@ export const App = () => {
           ))
         )}
       </div>
-      <div className="flex gap-x-4 justify-around">
-        <Button onClick={nextState}>Next State</Button>
+      <div className="flex gap-x-4 gap-y-2 justify-around">
+        <Button onClick={nextState} disabled={isPlayingForever}>
+          Next State
+        </Button>
         <Button onClick={togglePlayForever}>{`${
           isPlayingForever ? "Stop" : "Start"
-        } Play forever`}</Button>
-        <Button onClick={forwardUpdates}>Forward updates</Button>
-        <Button onClick={nextState} variant="secondary">
+        } Play Forever`}</Button>
+        <Button onClick={forwardUpdates} disabled={isPlayingForever}>
+          Adanvce updates
+        </Button>
+        <Button onClick={resetBoard} variant="secondary">
           Reset
         </Button>
       </div>

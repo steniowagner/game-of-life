@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-import { cn } from "@/utils";
+import { constants, cn } from "@/utils";
 
 type BoardCellProps = {
   isAlive: boolean;
@@ -10,7 +10,8 @@ type BoardCellProps = {
 export const BoardCell = memo((props: BoardCellProps) => (
   <div
     className={cn(
-      "w-7 h-7 border-solid border-2 border-gray-300",
+      "border-solid border-2 border-gray-300",
+      `w-${constants.BOARD_CELL_SIZE} h-${constants.BOARD_CELL_SIZE}`,
       props.isAlive ? "bg-red-500" : "bg-slate-50"
     )}
     onClick={props.onClick}
