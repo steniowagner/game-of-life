@@ -1,5 +1,9 @@
+const PLAY_FOREVER_TIMEOUT_MS = 500;
+const BOARD_SIZE = 12;
+const ADVANCE_X_STATE_UPDATES = 1;
+
 export const constants = {
-  PLAY_FOREVER_TIMEOUT_MS: 500,
+  PLAY_FOREVER_TIMEOUT_MS,
   BOARD_SIZE: 12,
   ADVANCE_X_STATE_UPDATES: 1,
   BOARD_CELL_SIZE: 8,
@@ -10,5 +14,10 @@ export const constants = {
     ADVANCE_X_STATE_UPDATES: "Failed to advance state updates.",
     GENERATE_INITIAL_BOARD: "Failed to generate the initial board.",
     PLAY_FOREVER: "Failed to play forever.",
+  },
+  initialBoardSetup: {
+    playForeverTimeoutMs: PLAY_FOREVER_TIMEOUT_MS,
+    advanceXStateUpdates: ADVANCE_X_STATE_UPDATES,
+    boardSize: BOARD_SIZE,
   },
 };

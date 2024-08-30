@@ -13,25 +13,21 @@ type BoardSetupContextProps = {
   boardSetup: BoardSetup;
 };
 
-const INITIAL_BOARD_SETUP = {
-  playForeverTimeoutMs: constants.PLAY_FOREVER_TIMEOUT_MS,
-  advanceXStateUpdates: constants.ADVANCE_X_STATE_UPDATES,
-  boardSize: constants.BOARD_SIZE,
-};
-
 type BoardSetupContextProviderProps = {
   children: JSX.Element;
 };
 
-const BoardSetupContext = createContext<BoardSetupContextProps>({
-  boardSetup: INITIAL_BOARD_SETUP,
+export const BoardSetupContext = createContext<BoardSetupContextProps>({
+  boardSetup: constants.initialBoardSetup,
   changeBoardSetup: () => {},
 });
 
 export const BoardSetupContextProvider = (
   props: BoardSetupContextProviderProps
 ) => {
-  const [boardSetup, setBoardSetup] = useState<BoardSetup>(INITIAL_BOARD_SETUP);
+  const [boardSetup, setBoardSetup] = useState<BoardSetup>(
+    constants.initialBoardSetup
+  );
 
   const changeBoardSetup = useCallback((boardSetup: BoardSetup) => {
     setBoardSetup(boardSetup);
