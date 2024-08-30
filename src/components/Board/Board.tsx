@@ -5,7 +5,7 @@ import { constants } from "@/utils";
 import { BoardCell } from "./components/BoardCell";
 
 type BoardProps = {
-  updateCellStateManually: (rowIndex: number, columnIndex: number) => void;
+  onClickCell: (rowIndex: number, columnIndex: number) => void;
   board: BoardType;
 };
 
@@ -27,7 +27,7 @@ export const Board = (props: BoardProps) => {
             isAlive={
               props.board[rowIndex][columnIndex] === BoardCellState.ALIVE
             }
-            onClick={() => props.updateCellStateManually(rowIndex, columnIndex)}
+            onClick={() => props.onClickCell(rowIndex, columnIndex)}
           />
         ))
       )}
