@@ -5,6 +5,14 @@ import { useGame } from "./use-game";
 export const Game = () => {
   const game = useGame();
 
+  if (!game.board[0] && game.error) {
+    return (
+      <div className="flex w-screen h-screen justify-center items-center bg-slate-100">
+        <h1 className="text-2xl text-red-600">{game.error}</h1>
+      </div>
+    );
+  }
+
   if (!game.board[0]) {
     return null;
   }
@@ -14,6 +22,7 @@ export const Game = () => {
       <h1 className="text-3xl font-bold text-slate-750">Game of Life</h1>
       <SetupBoard />
       <Board onClickCell={game.onClickCell} board={game.board} />
+      {game.error && <h1 className="text-2xl text-red-600">{game.error}</h1>}
       <div className="flex gap-x-4 gap-y-2 justify-around">
         <Button
           onClick={game.onClickNextState}

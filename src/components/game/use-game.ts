@@ -1,49 +1,85 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useRef, useEffect } from "react";
 
-import { BoardCellState, Board as BoardType } from "@/types";
 import { board as boardServices } from "@/services";
+import { Board as BoardType } from "@/types";
 import { useBoardSetup } from "@/contexts";
+import { constants } from "@/utils";
+import { logger } from "@/lib";
 
 export const useGame = () => {
   const [isPlayingForever, setIsPlayingForever] = useState(false);
   const [board, setBoard] = useState<BoardType>([]);
+  const [error, setError] = useState("");
 
   const playingForeverRef = useRef(isPlayingForever);
 
   const { boardSetup } = useBoardSetup();
 
-  const updateCellStateManually = useCallback((row: number, column: number) => {
-    setBoard((oldBoard) => {
-      const boardUpdated = oldBoard.map((row) => row.slice());
-      boardUpdated[row][column] =
-        boardUpdated[row][column] === BoardCellState.ALIVE
-          ? BoardCellState.DEAD
-          : BoardCellState.ALIVE;
-      return boardUpdated;
-    });
-  }, []);
+  const updateCellState = useCallback(
+    async (row: number, column: number) => {
+      try {
+        const response = await boardServices.toggleCellState({
+          board,
+          row,
+          column,
+        });
+        if (!response.ok) {
+          return setError(constants.errors.UPDATE_CELL_STATE);
+        }
+        setBoard(response.board);
+      } catch (err: unknown) {
+        setError(constants.errors.UPDATE_CELL_STATE);
+        logger.error(err);
+      }
+    },
+    [board]
+  );
 
   const updateToNextState = useCallback(async () => {
-    const boardUpdated = await boardServices.computeNextState(board);
-    setBoard(boardUpdated);
-    setIsPlayingForever(false);
+    try {
+      const response = await boardServices.computeNextState(board);
+      if (!response.ok) {
+        return setError(constants.errors.UPDATE_NEXT_STATE);
+      }
+      setBoard(response.board);
+      setIsPlayingForever(false);
+    } catch (err) {
+      setError(constants.errors.UPDATE_NEXT_STATE);
+      logger.error(err);
+    }
   }, [board]);
 
   const advanceStateUpdates = useCallback(async () => {
-    const nextBoard = await boardServices.advanceXStateUpdates(
-      board,
-      boardSetup.advanceXStateUpdates
-    );
-    setBoard(nextBoard);
+    try {
+      const response = await boardServices.advanceXStateUpdates(
+        board,
+        boardSetup.advanceXStateUpdates
+      );
+      if (!response.ok) {
+        return setError(constants.errors.ADVANCE_X_STATE_UPDATES);
+      }
+      setBoard(response.board);
+    } catch (err) {
+      setError(constants.errors.ADVANCE_X_STATE_UPDATES);
+      logger.error(err);
+    }
   }, [board, boardSetup]);
 
   const resetBoard = useCallback(async () => {
-    const initialBoard = await boardServices.generateInitialBoard(
-      boardSetup.boardSize
-    );
-    setBoard(initialBoard);
-    setIsPlayingForever(false);
+    try {
+      const response = await boardServices.generateInitialBoard(
+        boardSetup.boardSize
+      );
+      if (!response.ok) {
+        return setError(constants.errors.GENERATE_INITIAL_BOARD);
+      }
+      setBoard(response.board);
+      setIsPlayingForever(false);
+    } catch (err) {
+      setError(constants.errors.GENERATE_INITIAL_BOARD);
+      logger.error(err);
+    }
   }, [boardSetup.boardSize]);
 
   const togglePlayForever = useCallback(() => {
@@ -58,36 +94,56 @@ export const useGame = () => {
     if (!isPlayingForever) {
       return;
     }
-    const loopComputingNextState = async () => {
-      if (!playingForeverRef.current) {
-        return;
+    const loopComputingNextState = async (board: BoardType) => {
+      try {
+        if (!playingForeverRef.current) {
+          return;
+        }
+        const response = await boardServices.computeNextState(board);
+        if (!response.ok) {
+          return setError(constants.errors.PLAY_FOREVER);
+        }
+        setBoard(response.board);
+        setTimeout(
+          () => loopComputingNextState(response.board),
+          boardSetup.playForeverTimeoutMs
+        );
+      } catch (err) {
+        setError(constants.errors.PLAY_FOREVER);
+        logger.error(err);
       }
-      const nextBoardState = await boardServices.computeNextState(board);
-      setBoard(nextBoardState);
-      setTimeout(loopComputingNextState, boardSetup.playForeverTimeoutMs);
     };
-    loopComputingNextState();
+    loopComputingNextState(board);
   }, [isPlayingForever]);
 
   useEffect(() => {
     const resetToInitialBoardState = async () => {
-      const initialBoard = await boardServices.generateInitialBoard(
-        boardSetup.boardSize
-      );
-      setBoard(initialBoard);
-      setIsPlayingForever(false);
+      try {
+        const response = await boardServices.generateInitialBoard(
+          boardSetup.boardSize
+        );
+        if (!response.ok) {
+          return setError(constants.errors.GENERATE_INITIAL_BOARD);
+        }
+        setBoard(response.board);
+        setIsPlayingForever(false);
+      } catch (err) {
+        setError(constants.errors.GENERATE_INITIAL_BOARD);
+        logger.error(err);
+      }
     };
     resetToInitialBoardState();
   }, [boardSetup]);
 
   return {
-    onClickCell: updateCellStateManually,
+    onClickCell: updateCellState,
     onClickPlayForever: togglePlayForever,
     onClickReset: resetBoard,
     onClickNextState: updateToNextState,
     onClickAdvanceStateUpdates: advanceStateUpdates,
     advanceXStateUpdates: boardSetup.advanceXStateUpdates,
     isPlayingForever,
+    error,
     board,
   };
 };
