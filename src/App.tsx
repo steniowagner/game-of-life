@@ -1,11 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 
+import { BoardCell, Button } from "@/components";
 import { BoardCellState, Board } from "@/types";
-import { BoardCell } from "@/components";
-import { cn } from "@/utils";
 
-const NUM_ROWS = 10;
-const NUM_COLS = 10;
+const NUM_ROWS = 24;
+const NUM_COLS = 24;
 
 const generateInitialBoard = () => {
   const board: Board = [];
@@ -123,15 +122,21 @@ export const App = () => {
         return;
       }
       setBoard((oldBoard) => computeNextState(oldBoard));
-      setTimeout(loopComputingNextState, 1500);
+      setTimeout(loopComputingNextState, 300);
     };
     loopComputingNextState();
   }, [computeNextState, isPlayingForever]);
 
   return (
-    <div className="flex w-screen h-screen flex-col gap-y-4 justify-center items-center bg-slate-900 ">
-      <h1 className="text-3xl font-bold text-slate-50">Game of Life</h1>
-      <div className={cn("grid", `grid-cols-${NUM_COLS}`)}>
+    <div className="flex w-screen h-screen flex-col gap-y-4 justify-center items-center bg-slate-100 overflow-x-scroll overflow-y-scoll">
+      <h1 className="text-3xl font-bold text-slate-750">Game of Life</h1>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${NUM_COLS}, 1.75rem)`,
+          width: "fit-content",
+        }}
+      >
         {board.map((rows, rowIndex) =>
           rows.map((_column, columnIndex) => (
             <BoardCell
@@ -142,15 +147,16 @@ export const App = () => {
           ))
         )}
       </div>
-      <button className="font-white text-white" onClick={nextState}>
-        Next State
-      </button>
-      <button className="font-white text-white" onClick={togglePlayForever}>
-        {`${isPlayingForever ? "Stop" : "Start"} Play forever`}
-      </button>
-      <button className="font-white text-white" onClick={forwardUpdates}>
-        Forward updates
-      </button>
+      <div className="flex gap-x-4 justify-around">
+        <Button onClick={nextState}>Next State</Button>
+        <Button onClick={togglePlayForever}>{`${
+          isPlayingForever ? "Stop" : "Start"
+        } Play forever`}</Button>
+        <Button onClick={forwardUpdates}>Forward updates</Button>
+        <Button onClick={nextState} variant="secondary">
+          Reset
+        </Button>
+      </div>
     </div>
   );
 };
