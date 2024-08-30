@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useCallback, useRef, useEffect } from "react";
 
-import { BoardCell, Button, SetupBoard } from "@/components";
-import { BoardCellState, Board } from "@/types";
+import { BoardCellState, Board as BoardType } from "@/types";
+import { Board, Button, SetupBoard } from "@/components";
 import { useBoardSetup } from "@/contexts";
-import { constants } from "@/utils";
 
 const generateInitialBoard = (boardSize: number) => {
-  const board: Board = [];
+  const board: BoardType = [];
   for (let i = 0; i < boardSize; i++) {
     board.push(Array(boardSize).fill(BoardCellState.DEAD));
   }
@@ -27,7 +26,7 @@ const operations = [
 
 export const App = () => {
   const [isPlayingForever, setIsPlayingForever] = useState(false);
-  const [board, setBoard] = useState<Board>([]);
+  const [board, setBoard] = useState<BoardType>([]);
 
   const playingForeverRef = useRef(isPlayingForever);
 
@@ -45,7 +44,7 @@ export const App = () => {
   }, []);
 
   type CountCellNeighborsParams = {
-    board: Board;
+    board: BoardType;
     rowIndex: number;
     columnIndex: number;
   };
@@ -67,7 +66,7 @@ export const App = () => {
   }, []);
 
   const computeNextState = useCallback(
-    (board: Board) => {
+    (board: BoardType) => {
       const boardCopy = board.map((row) => row.slice());
       const nextState = boardCopy.map((row, rowIndex) =>
         row.map((cell, columnIndex) => {
@@ -144,23 +143,7 @@ export const App = () => {
     <div className="flex w-screen h-screen flex-col gap-y-4 justify-center items-center bg-slate-100 overflow-x-scroll overflow-y-scoll">
       <h1 className="text-3xl font-bold text-slate-750">Game of Life</h1>
       <SetupBoard />
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${boardSetup.boardSize}, ${constants.BOARD_TEMPLATE_COLUMNS_SIZE})`,
-          width: "fit-content",
-        }}
-      >
-        {board.map((rows, rowIndex) =>
-          rows.map((_column, columnIndex) => (
-            <BoardCell
-              key={`${rowIndex}-${columnIndex}`}
-              isAlive={board[rowIndex][columnIndex] === BoardCellState.ALIVE}
-              onClick={() => updateCellStateManually(rowIndex, columnIndex)}
-            />
-          ))
-        )}
-      </div>
+      <Board updateCellStateManually={updateCellStateManually} board={board} />
       <div className="flex gap-x-4 gap-y-2 justify-around">
         <Button onClick={nextState} disabled={isPlayingForever}>
           Next State
@@ -169,7 +152,11 @@ export const App = () => {
           isPlayingForever ? "Stop" : "Start"
         } Play Forever`}</Button>
         <Button onClick={forwardUpdates} disabled={isPlayingForever}>
-          Adanvce updates
+          {`Advance ${
+            boardSetup.advanceXStateUpdates === 1
+              ? `1 update`
+              : `${boardSetup.advanceXStateUpdates} updates`
+          }`}
         </Button>
         <Button onClick={resetBoard} variant="secondary">
           Reset
