@@ -1,50 +1,54 @@
-# React + TypeScript + Vite
+# Game of life
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img src="https://github.com/steniowagner/game-of-life/blob/main/images/game-of-life.png" />
 
-Currently, two official plugins are available:
+The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves. It is Turing complete and can simulate a universal constructor or any other Turing machine.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Rules:
 
-## Expanding the ESLint configuration
+1. Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+2. Any live cell with two or three live neighbours lives on to the next generation.
+3. Any live cell with more than three live neighbours dies, as if by overpopulation.
+4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+You can learn more about Game of life [here](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Prerequisites
+
+To run this project locally, make sure that you have npm and NodeJS installed in your local environment. If you don't have nodejs/npm installed locally, you can find the download page [here](https://nodejs.org/en/download/package-manager).
+
+### Installing
+
+**Cloning the Repository**
+
+```
+$ git clone https://github.com/steniowagner/game-of-life
+
+$ cd pomofocus
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+> For sake of simplicify, I'll be using npm as the package-manager for this tutorial. But you can use your favorite one as well.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+**Installing dependencies**
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```
+$ npm install
+```
+
+**Building**
+
+Before we import our extenion into Google Chrome, we have to build it.
+
+```
+$ npm run build
+```
+
+**Testing**
+
+You can run the test-cases in the project by running the following script:
+
+```
+$ npm run test
 ```
