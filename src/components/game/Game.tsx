@@ -1,6 +1,4 @@
-import { Board } from "./board/Board";
-import { Button } from "../../components/Button";
-import { SetupBoard } from "../../components/setup-board/SetupBoard";
+import { SetupBoard, Button, Board } from "..";
 
 import { useGame } from "./use-game";
 
