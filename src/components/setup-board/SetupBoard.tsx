@@ -6,7 +6,7 @@ export const SetupBoard = () => {
   const setupBoard = useSetupBoard();
 
   return (
-    <div className="flex gap-y-2 items-end gap-x-4">
+    <div className="flex gap-y-2 items-end gap-x-4" data-testid="setup-board">
       <Input
         label="Advance updates"
         value={setupBoard.advanceXStateUpdates}
