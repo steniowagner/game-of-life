@@ -13,6 +13,9 @@ Rules:
 
 You can learn more about Game of life [here](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
+## Production URL
+https://steniowagner.github.io/game-of-life/
+
 ## Getting Started
 
 ### Prerequisites
