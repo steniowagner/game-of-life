@@ -19,10 +19,10 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm install
+        run: npm run install
 
       - name: Run tests
-        run: npm test
+        run: npm run test
 
       - name: Build project
         if: success()
