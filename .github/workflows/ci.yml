@@ -26,4 +26,4 @@ jobs:
 
       - name: Build project
         if: success()
-        run: npm build
+        run: npm run build
