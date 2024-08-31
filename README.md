@@ -26,7 +26,7 @@ To run this project locally, make sure that you have npm and NodeJS installed in
 ```
 $ git clone https://github.com/steniowagner/game-of-life
 
-$ cd pomofocus
+$ cd game-of-life
 ```
 
 > For sake of simplicify, I'll be using npm as the package-manager for this tutorial. But you can use your favorite one as well.
