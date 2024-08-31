@@ -3,21 +3,20 @@
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import react from "@vitejs/plugin-react";
+// import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/game-of-life/",
-  plugins: [react(), tsconfigPaths()],
-
+  plugins: [tsconfigPaths(), react()],
   test: {
     globals: true,
     environment: "jsdom",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     setupFiles: ["./src/test/setup.ts"],
   },
-  resolve: {
-    alias: {
-      "@/": new URL("./src/", import.meta.url).pathname,
-    },
-  },
+  // resolve: {
+  //   alias: {
+  //     "@": path.resolve(__dirname, "./src"),
+  //   },
+  // },
 });
