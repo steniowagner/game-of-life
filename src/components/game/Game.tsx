@@ -24,7 +24,7 @@ export const Game = () => {
       className="flex w-screen h-screen flex-col gap-y-4 justify-center items-center bg-slate-100 overflow-x-scroll overflow-y-scoll"
       data-testid="game"
     >
-      <h1 className="text-3xl font-bold text-slate-750">Game of Life</h1>
+      <h1 className="text-3xl font-bold text-slate-750">Game of Life TEST</h1>
       <SetupBoard />
       <Board onClickCell={game.onClickCell} board={game.board} />
       {game.error && (
